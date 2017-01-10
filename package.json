@@ -1,8 +1,7 @@
 {
   "dependencies": {
-    "co-fs": "^1.2.0",
-    "koa": "^1.2.4",
-    "koa-bodyparser": "^2.3.0",
-    "koa-route": "^2.4.2"
+    "koa": "^2.0.0-alpha.7",
+    "koa-bodyparser": "^3.2.0",
+    "koa-router": "^7.0.1"
   }
 }

@@ -7,39 +7,47 @@ let app = new Koa();
 let router = new Router();
 
 let api = {
-  list: function(ctx, next) {
+  games: function(ctx) {
     ctx.response.type = 'json';
-    ctx.body = fs.readFileSync('data/characters/list.json', 'utf8');
+    ctx.body = fs.readFileSync('data/games.json', 'utf8');
   },
+  characters: {
+    list: function(ctx) {
+      let {game} = ctx.params;
+      ctx.response.type = 'json';
+      ctx.body = fs.readFileSync('data/characters/' + game + '/list.json', 'utf8');
+    },
 
-  get: function(ctx, next) {
-    let {id} = ctx.params;
-    ctx.response.type = 'json';
-    ctx.body = fs.readFileSync('data/characters/' + id + '.json', 'utf8');
-  },
+    get: function(ctx) {
+      let {game, id} = ctx.params;
+      ctx.response.type = 'json';
+      ctx.body = fs.readFileSync('data/characters/' + game + '/' + id + '.json', 'utf8');
+    },
 
-  update: function(ctx, next) {
-    let {id} = ctx.params;
-    let json = JSON.stringify(ctx.request.body);
+    update: function(ctx) {
+      let {game, id} = ctx.params;
+      let json = JSON.stringify(ctx.request.body);
 
-    if (!ctx.request.body || json.length < 3) {
-      ctx.body = 'No content received';
-      return;
+      if (!ctx.request.body || json.length < 3) {
+        ctx.body = 'No content received';
+        return;
+      }
+      fs.writeFileSync('data/characters/' + game + '/' + id + '.json', json, 'utf8');
+      ctx.body = 'Saved successfully';
     }
-    fs.writeFileSync('data/characters/' + id + '.json', json, 'utf8');
-    ctx.body = 'Saved successfully';
   },
-
-  metadata: function(ctx, next) {
+  metadata: function(ctx) {
     let {system} = ctx.params;
     ctx.response.type = 'json';
     ctx.body = fs.readFileSync('data/metadata/' + system + '.json', 'utf8');
   }
 };
 
-router.get('/characters', api.list)
-  .get('/characters/:id', api.get)
-  .post('/characters/:id', api.update)
+router
+  .get('/games', api.games)
+  .get('/:game/characters', api.characters.list)
+  .get('/:game/characters/:id', api.characters.get)
+  .post('/:game/characters/:id', api.characters.update)
   .get('/metadata/:system', api.metadata);
 
 app.use((ctx, next) => {

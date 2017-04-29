@@ -10,3 +10,10 @@ $ node app.js
 
 ### License
 MIT
+
+
+| Node  | Hash range |
+| ----- |:----------:|
+| node1 | 0.. - 3..  |
+| node2 | 4.. - 6..  |
+| node3 | 7.. - 9..  |
